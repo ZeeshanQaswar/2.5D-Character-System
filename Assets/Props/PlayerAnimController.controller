@@ -198,6 +198,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boolName: Drop
   stateOnExit: 0
+  onStartRM: 1
+  onEndRM: 0
 --- !u!1102 &6496001121074979335
 AnimatorState:
   serializedVersion: 5
@@ -247,7 +249,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 79ebec7c3a311714994332ce6bef3311,
+  m_Motion: {fileID: -203655887218126122, guid: d261021b172e3c742beb0456c2ae238e,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -272,7 +274,7 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.25
-  m_TransitionOffset: 0
+  m_TransitionOffset: 0.17262423
   m_ExitTime: 0.77040815
   m_HasExitTime: 0
   m_HasFixedDuration: 1

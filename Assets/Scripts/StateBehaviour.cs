@@ -12,26 +12,27 @@ public class StateBehaviour : MonoBehaviour
     [Header("== GROUND BELOW ==")]
     public Transform grndCheck;
     public float gDistanceCheck;
-    public Color gDebugColor;
 
     [Header("== SURFACE CHECK ==")]
     public Transform startObj;
     public float sDistanceCheck;
-    public Color sDebugColor;
 
     [Header("== STATES ==")]
-    public bool runState = false;
-    public bool groundBelow;
+    public bool runState;
+    public bool onGround;
     public bool surfaceCheck;
+
 
     private float _horizontal;
     private Transform _myTransform;
     private Animator _myAnimator;
+    public float groundDistance;
 
-    public Vector3 _movVector;
+    private Vector3 _movVector;
 
     private void Awake()
     {
+        ignoreLayers = ~ignoreLayers;
         _myAnimator = transform.GetChild(0).GetComponent<Animator>();
         _myTransform = GetComponent<Transform>();
     }
@@ -41,21 +42,22 @@ public class StateBehaviour : MonoBehaviour
         GetInputs();
         HandleMovement();
         RayGroundCheck();
-        //RaySurfaceCheck();
+        ManageStates();
     }
 
     private void RayGroundCheck()
     {
-        Debug.DrawRay(grndCheck.localPosition, Vector3.up * gDistanceCheck, gDebugColor);
-        if (Physics.Raycast(grndCheck.localPosition, - grndCheck.up, out RaycastHit hit, gDistanceCheck, ignoreLayers))
+        Debug.DrawRay(grndCheck.position, -grndCheck.up * gDistanceCheck, Color.red);
+
+        if (Physics.Raycast(grndCheck.position, -grndCheck.up, out RaycastHit hit, gDistanceCheck, ignoreLayers))
         {
-            Debug.Log(hit.collider.gameObject.name);
+            groundDistance = Vector3.Distance(hit.point, transform.position);
+            onGround = groundDistance < 0.25f;
         }
-    }
-
-    private void RaySurfaceCheck()
-    {
-
+        else
+        {
+            onGround = false;
+        }
     }
 
     private void HandleMovement()
@@ -68,10 +70,14 @@ public class StateBehaviour : MonoBehaviour
         }
     }
 
+    private void ManageStates()
+    {
+        _myAnimator.SetBool("Drop", !onGround);
+    }
+
     private void GetInputs()
     {
         runState = Input.GetKey(KeyCode.LeftShift);
-
 
         _horizontal = Input.GetAxis("Horizontal");
 

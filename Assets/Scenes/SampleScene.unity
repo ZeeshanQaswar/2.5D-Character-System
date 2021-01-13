@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 76950226}
   - component: {fileID: 76950228}
   - component: {fileID: 76950227}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: PlayerBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,16 +260,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 3.5
+  ignoreLayers:
+    serializedVersion: 2
+    m_Bits: 4
   grndCheck: {fileID: 116683010}
-  gDistanceCheck: 0.6
-  gDebugColor: {r: 1, g: 0, b: 0, a: 0}
+  gDistanceCheck: 1
   startObj: {fileID: 1638969248}
-  sDistanceCheck: 0.6
-  sDebugColor: {r: 0, g: 0.20553756, b: 1, a: 0}
+  sDistanceCheck: 0.3
   runState: 0
-  groundBelow: 0
+  onGround: 0
   surfaceCheck: 0
-  _movVector: {x: 0, y: 0, z: 0}
+  groundDistance: 0
 --- !u!54 &76950228
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -295,7 +296,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 116683010}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Ground_Check_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -554,6 +555,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8703544979030634772, guid: ec14cc93d2e192d489d262476aa00213,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ec14cc93d2e192d489d262476aa00213,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -609,15 +615,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6153458435004094520, guid: ec14cc93d2e192d489d262476aa00213,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -298872764833787496, guid: ec14cc93d2e192d489d262476aa00213,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 205264445719448523, guid: ec14cc93d2e192d489d262476aa00213,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ec14cc93d2e192d489d262476aa00213,
         type: 3}
       propertyPath: m_Name
       value: Player Model
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ec14cc93d2e192d489d262476aa00213,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1794436471828847685, guid: ec14cc93d2e192d489d262476aa00213,
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1794436471828847685, guid: ec14cc93d2e192d489d262476aa00213,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4936884950917866777, guid: ec14cc93d2e192d489d262476aa00213,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: ec14cc93d2e192d489d262476aa00213,
         type: 3}
@@ -842,7 +878,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1638969248}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Ground_Check_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -987,7 +1023,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1714830655}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Camera_Follow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
