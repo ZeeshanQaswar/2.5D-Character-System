@@ -13,6 +13,10 @@ public class StateBehaviour : MonoBehaviour
     public Transform grndCheck;
     public float gDistanceCheck;
 
+    [Header("== FRONT CHECK ==")]
+    public Transform frntCheck;
+    public float fDistanceCheck;
+
     [Header("== SURFACE CHECK ==")]
     public Transform startObj;
     public float sDistanceCheck;
@@ -20,6 +24,7 @@ public class StateBehaviour : MonoBehaviour
     [Header("== STATES ==")]
     public bool runState;
     public bool onGround;
+    public bool somethingFront;
     public bool surfaceCheck;
 
 
@@ -46,6 +51,7 @@ public class StateBehaviour : MonoBehaviour
         GetInputs();
         HandleMovement();
         GroundCheck();
+        FrontCheck();
         ManageStates();
     }
 
@@ -67,6 +73,24 @@ public class StateBehaviour : MonoBehaviour
 
             // Change Capsule collider size 
             _cCollider.height = Mathf.Lerp(_cCollider.height, 1.3f, Time.deltaTime * 6f);
+        }
+    }
+
+    private void FrontCheck()
+    {
+        Debug.DrawRay(frntCheck.position, frntCheck.forward * fDistanceCheck, Color.blue);
+        if (Physics.Raycast(grndCheck.position, frntCheck.forward, out RaycastHit hit, fDistanceCheck, ignoreLayers))
+        {
+            //Debug.Log(hit.collider.name);
+            somethingFront = true;
+            if (hit.collider.TryGetComponent<IInteractable>(out IInteractable item))
+            {
+                item.Interaction();
+            }
+        }
+        else
+        {
+            somethingFront = false;
         }
     }
 
