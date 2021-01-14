@@ -26,14 +26,18 @@ public class StateBehaviour : MonoBehaviour
     private float _horizontal;
     private Transform _myTransform;
     private Animator _myAnimator;
+    private CapsuleCollider _cCollider;
+    private Transform _playerModel;
     public float groundDistance;
 
     private Vector3 _movVector;
 
     private void Awake()
     {
+        _playerModel = transform.GetChild(0);
+        _cCollider = _playerModel.GetComponent<CapsuleCollider>();
         ignoreLayers = ~ignoreLayers;
-        _myAnimator = transform.GetChild(0).GetComponent<Animator>();
+        _myAnimator = _playerModel.GetComponent<Animator>();
         _myTransform = GetComponent<Transform>();
     }
 
@@ -41,22 +45,28 @@ public class StateBehaviour : MonoBehaviour
     {
         GetInputs();
         HandleMovement();
-        RayGroundCheck();
+        GroundCheck();
         ManageStates();
     }
 
-    private void RayGroundCheck()
+    private void GroundCheck()
     {
         Debug.DrawRay(grndCheck.position, -grndCheck.up * gDistanceCheck, Color.red);
 
         if (Physics.Raycast(grndCheck.position, -grndCheck.up, out RaycastHit hit, gDistanceCheck, ignoreLayers))
         {
             groundDistance = Vector3.Distance(hit.point, transform.position);
-            onGround = groundDistance < 0.25f;
+            onGround = true;
+
+            // Change Capsule collider size 
+            _cCollider.height = Mathf.Lerp(_cCollider.height, 1.79f, Time.deltaTime * 6f);
         }
         else
         {
             onGround = false;
+
+            // Change Capsule collider size 
+            _cCollider.height = Mathf.Lerp(_cCollider.height, 1.3f, Time.deltaTime * 6f);
         }
     }
 
@@ -72,7 +82,7 @@ public class StateBehaviour : MonoBehaviour
 
     private void ManageStates()
     {
-        _myAnimator.SetBool("Drop", !onGround);
+        _myAnimator.SetBool("Grounded", onGround);
     }
 
     private void GetInputs()
