@@ -3,6 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CurrentState
+{
+    Normal, Teeter
+}
+
 public class StateBehaviour : MonoBehaviour
 {
     [Header("== PROPERTIES ==")]
@@ -10,26 +15,29 @@ public class StateBehaviour : MonoBehaviour
     public LayerMask ignoreLayers;
 
     [Header("== GROUND BELOW ==")]
-    public Transform grndCheck;
-    public float gDistanceCheck;
+    public Transform gCheckPoint;
+    public float grndCheckDistance;
 
     [Header("== FRONT CHECK ==")]
-    public Transform frntCheck;
-    public float fDistanceCheck;
+    public Transform fCheckPoint;
+    public float frontCheckDistance;
+    
+    //[Header("== FRONT CHECK ==")]
+    //public Transform distCheckPoint;
+    //public float distCheckDistance;
 
-    [Header("== SURFACE CHECK ==")]
-    public Transform startObj;
-    public float sDistanceCheck;
 
     [Header("== STATES ==")]
+    public CurrentState pCurrentState;
     public bool runState;
+    public bool walkCarefully;
     public bool onGround;
-    public bool somethingFront;
+    public bool ledgeWalking;
+    public bool itemInFront;
     public bool surfaceCheck;
 
 
     private float _horizontal;
-    private Transform _myTransform;
     private Animator _myAnimator;
     private CapsuleCollider _cCollider;
     private Transform _playerModel;
@@ -39,30 +47,47 @@ public class StateBehaviour : MonoBehaviour
 
     private void Awake()
     {
+        pCurrentState = CurrentState.Normal;
+
+        ignoreLayers = ~ignoreLayers;
+
         _playerModel = transform.GetChild(0);
         _cCollider = _playerModel.GetComponent<CapsuleCollider>();
-        ignoreLayers = ~ignoreLayers;
         _myAnimator = _playerModel.GetComponent<Animator>();
-        _myTransform = GetComponent<Transform>();
     }
 
     public void Update()
     {
+        GroundCheck();
+        FrontItemCheck();
+
         GetInputs();
         HandleMovement();
-        GroundCheck();
-        FrontCheck();
         ManageStates();
     }
 
     private void GroundCheck()
     {
-        Debug.DrawRay(grndCheck.position, -grndCheck.up * gDistanceCheck, Color.red);
+        Debug.DrawRay(gCheckPoint.position, -gCheckPoint.up * grndCheckDistance, Color.red);
 
-        if (Physics.Raycast(grndCheck.position, -grndCheck.up, out RaycastHit hit, gDistanceCheck, ignoreLayers))
+        if (Physics.Raycast(gCheckPoint.position, -gCheckPoint.up, out RaycastHit hit, grndCheckDistance, ignoreLayers))
         {
             groundDistance = Vector3.Distance(hit.point, transform.position);
             onGround = true;
+
+            if (hit.collider.TryGetComponent<IInteractable>(out IInteractable item))
+            {
+                if (item.GetType() == typeof(TeeterPlatform_Prop))
+                {
+                    ledgeWalking = true;
+                }
+                else
+                {
+                    ledgeWalking = false;
+                }
+
+                item.Interaction();
+            }
 
             // Change Capsule collider size 
             _cCollider.height = Mathf.Lerp(_cCollider.height, 1.79f, Time.deltaTime * 6f);
@@ -76,13 +101,12 @@ public class StateBehaviour : MonoBehaviour
         }
     }
 
-    private void FrontCheck()
+    private void FrontItemCheck()
     {
-        Debug.DrawRay(frntCheck.position, frntCheck.forward * fDistanceCheck, Color.blue);
-        if (Physics.Raycast(grndCheck.position, frntCheck.forward, out RaycastHit hit, fDistanceCheck, ignoreLayers))
+        Debug.DrawRay(fCheckPoint.position, fCheckPoint.forward * frontCheckDistance, Color.blue);
+        if (Physics.Raycast(fCheckPoint.position, fCheckPoint.forward, out RaycastHit hit, frontCheckDistance, ignoreLayers))
         {
-            //Debug.Log(hit.collider.name);
-            somethingFront = true;
+            itemInFront = true;
             if (hit.collider.TryGetComponent<IInteractable>(out IInteractable item))
             {
                 item.Interaction();
@@ -90,8 +114,16 @@ public class StateBehaviour : MonoBehaviour
         }
         else
         {
-            somethingFront = false;
+            itemInFront = false;
         }
+    }
+
+
+    private void GetInputs()
+    {
+        runState = Input.GetKey(KeyCode.LeftShift);
+        _horizontal = Input.GetAxis("Horizontal");
+        _movVector = new Vector3(0f, 0f, _horizontal);
     }
 
     private void HandleMovement()
@@ -100,25 +132,16 @@ public class StateBehaviour : MonoBehaviour
         {
             transform.rotation = Quaternion.LookRotation(_movVector);
             _myAnimator.SetFloat("InputX", Mathf.Abs(_horizontal));
+            walkSpeed = walkCarefully ? Mathf.Clamp(walkSpeed,0, walkSpeed/2f) : walkSpeed;
             transform.Translate(transform.InverseTransformDirection(transform.forward) * walkSpeed * Time.deltaTime);
         }
     }
-
+    
     private void ManageStates()
     {
+        walkCarefully = ledgeWalking;
         _myAnimator.SetBool("Grounded", onGround);
-    }
-
-    private void GetInputs()
-    {
-        runState = Input.GetKey(KeyCode.LeftShift);
-
-        _horizontal = Input.GetAxis("Horizontal");
-
-        if (!runState)
-            _horizontal = Mathf.Clamp(_horizontal, -0.5f, 0.5f);
-
-        _movVector = new Vector3(0f, 0f, _horizontal);
+        _myAnimator.SetBool("On Ledge", ledgeWalking);
     }
 
 }
