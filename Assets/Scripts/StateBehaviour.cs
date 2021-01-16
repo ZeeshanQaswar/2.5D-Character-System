@@ -68,7 +68,7 @@ public class StateBehaviour : MonoBehaviour
 
     private void GroundCheck()
     {
-        Debug.DrawRay(gCheckPoint.position, -gCheckPoint.up * grndCheckDistance, Color.red);
+        Debug.DrawRay(gCheckPoint.position, -gCheckPoint.up * grndCheckDistance, Color.red); // for debug
 
         if (Physics.Raycast(gCheckPoint.position, -gCheckPoint.up, out RaycastHit hit, grndCheckDistance, ignoreLayers))
         {
@@ -81,26 +81,28 @@ public class StateBehaviour : MonoBehaviour
                 {
                     ledgeWalking = true;
                 }
-                else
-                {
-                    ledgeWalking = false;
-                }
 
                 item.Interaction();
             }
+            else
+            {
+                ledgeWalking = false;
+            }
 
-            // Change Capsule collider size 
+            // Change player's Capsule collider size 
             _cCollider.height = Mathf.Lerp(_cCollider.height, 1.79f, Time.deltaTime * 6f);
         }
         else
         {
             onGround = false;
-
-            // Change Capsule collider size 
+            // shrink player's Capsule collider size 
             _cCollider.height = Mathf.Lerp(_cCollider.height, 1.3f, Time.deltaTime * 6f);
         }
     }
 
+    /// <summary>
+    /// Front Raycast check for interacting items.
+    /// </summary>
     private void FrontItemCheck()
     {
         Debug.DrawRay(fCheckPoint.position, fCheckPoint.forward * frontCheckDistance, Color.blue);
@@ -118,7 +120,6 @@ public class StateBehaviour : MonoBehaviour
         }
     }
 
-
     private void GetInputs()
     {
         runState = Input.GetKey(KeyCode.LeftShift);
@@ -132,7 +133,7 @@ public class StateBehaviour : MonoBehaviour
         {
             transform.rotation = Quaternion.LookRotation(_movVector);
             _myAnimator.SetFloat("InputX", Mathf.Abs(_horizontal));
-            walkSpeed = walkCarefully ? Mathf.Clamp(walkSpeed,0, walkSpeed/2f) : walkSpeed;
+            walkSpeed = walkCarefully ? Mathf.Clamp(walkSpeed, 0, 0.65f) : 3f;
             transform.Translate(transform.InverseTransformDirection(transform.forward) * walkSpeed * Time.deltaTime);
         }
     }
