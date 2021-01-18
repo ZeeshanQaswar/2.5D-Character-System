@@ -11,7 +11,11 @@ public enum CurrentState
 public class StateBehaviour : MonoBehaviour
 {
     [Header("== PROPERTIES ==")]
-    public float walkSpeed = 5f;
+    public float walkSpeed = 3f;
+    public float currentSpeed = 0f;
+    public float ledgeWalkingSpeed = 0.65f;
+    public float sneakingSpeed = 1.5f;
+
     public LayerMask ignoreLayers;
     public float jumpVerticalDist = 4f;
     public float jumpFrwdDist = 4f;
@@ -32,12 +36,12 @@ public class StateBehaviour : MonoBehaviour
     [Header("== STATES ==")]
     public CurrentState pCurrentState;
     public bool runState;
-    public bool walkCarefully;
     public bool onGround;
     public bool ledgeWalking;
     public bool itemInFront;
     public bool surfaceCheck;
     public bool jumping;
+    public bool sneaking;
 
 
     private float _horizontal;
@@ -132,6 +136,11 @@ public class StateBehaviour : MonoBehaviour
             jumping = true;
         }
 
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            sneaking = !sneaking;
+        }
+
         runState = Input.GetKey(KeyCode.LeftShift);
         _horizontal = Input.GetAxis("Horizontal");
         _movVector = new Vector3(0f, 0f, _horizontal);
@@ -143,8 +152,8 @@ public class StateBehaviour : MonoBehaviour
         {
             transform.rotation = Quaternion.LookRotation(_movVector);
             _myAnimator.SetFloat("InputX", Mathf.Abs(_horizontal));
-            walkSpeed = walkCarefully ? Mathf.Clamp(walkSpeed, 0, 0.65f) : 3f;
-            transform.Translate(transform.InverseTransformDirection(transform.forward) * walkSpeed * Time.deltaTime);
+            currentSpeed =  ledgeWalking? ledgeWalkingSpeed: sneaking? sneakingSpeed : walkSpeed;
+            transform.Translate(transform.InverseTransformDirection(transform.forward) * currentSpeed * Time.deltaTime);
         }
 
         // jump key pressed and player is onGround
@@ -178,7 +187,7 @@ public class StateBehaviour : MonoBehaviour
     
     private void ManageStates()
     {
-        walkCarefully = ledgeWalking;
+        _myAnimator.SetBool("Crouching", sneaking);
         _myAnimator.SetBool("Grounded", onGround);
         _myAnimator.SetBool("On Ledge", ledgeWalking);
     }
