@@ -263,8 +263,10 @@ MonoBehaviour:
   ignoreLayers:
     serializedVersion: 2
     m_Bits: 4
+  jumpVerticalDist: 200
+  jumpFrwdDist: 150
   gCheckPoint: {fileID: 116683010}
-  grndCheckDistance: 0.5
+  grndCheckDistance: 0.38
   fCheckPoint: {fileID: 1449218736}
   frontCheckDistance: 1.25
   pCurrentState: 0
@@ -274,6 +276,7 @@ MonoBehaviour:
   ledgeWalking: 0
   itemInFront: 0
   surfaceCheck: 0
+  jumping: 0
   groundDistance: 0
 --- !u!54 &76950228
 Rigidbody:
