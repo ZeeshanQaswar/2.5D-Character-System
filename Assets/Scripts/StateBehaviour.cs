@@ -15,6 +15,7 @@ public class StateBehaviour : MonoBehaviour
     public float currentSpeed = 0f;
     public float ledgeWalkingSpeed = 0.65f;
     public float sneakingSpeed = 1.5f;
+    public float fwdSlipBoost = 2f;
 
     public LayerMask ignoreLayers;
     public float jumpVerticalDist = 4f;
@@ -91,6 +92,8 @@ public class StateBehaviour : MonoBehaviour
                 if (item.GetType() == typeof(TeeterPlatform_Prop))
                 {
                     ledgeWalking = true;
+                    runningSlide = false;
+                    sneaking = false;
                 }
 
                 item.Interaction();
@@ -99,15 +102,10 @@ public class StateBehaviour : MonoBehaviour
             {
                 ledgeWalking = false;
             }
-
-            // Change player's Capsule collider size 
-            //_cCollider.height = Mathf.Lerp(_cCollider.height, 1.79f, Time.deltaTime * 6f);
         }
         else
         {
             onGround = false;
-            // shrink player's Capsule collider size 
-            //_cCollider.height = Mathf.Lerp(_cCollider.height, 1.3f, Time.deltaTime * 6f);
         }
     }
 
@@ -182,7 +180,7 @@ public class StateBehaviour : MonoBehaviour
     {
         yield return null;
         _myAnimator.Play("Running Slide");
-        _myRigidbody.AddForce(transform.forward * jumpFrwdDist * 2.5f, ForceMode.Acceleration);
+        _myRigidbody.AddForce(transform.forward * jumpFrwdDist * fwdSlipBoost, ForceMode.Acceleration);
     }
 
     IEnumerator JumpLogic()

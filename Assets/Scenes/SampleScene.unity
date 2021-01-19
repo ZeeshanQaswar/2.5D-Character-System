@@ -263,11 +263,12 @@ MonoBehaviour:
   currentSpeed: 0
   ledgeWalkingSpeed: 0.65
   sneakingSpeed: 1.5
+  fwdSlipBoost: 1.7
   ignoreLayers:
     serializedVersion: 2
     m_Bits: 4
-  jumpVerticalDist: 250
-  jumpFrwdDist: 150
+  jumpVerticalDist: 260
+  jumpFrwdDist: 230
   gCheckPoint: {fileID: 116683010}
   grndCheckDistance: 0.38
   fCheckPoint: {fileID: 1449218736}
@@ -1443,7 +1444,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1377885614
 Transform:
   m_ObjectHideFlags: 0
@@ -2137,7 +2138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2027076536
 Transform:
   m_ObjectHideFlags: 0
