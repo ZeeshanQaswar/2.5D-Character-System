@@ -42,6 +42,8 @@ public class StateBehaviour : MonoBehaviour
     public bool surfaceCheck;
     public bool jumping;
     public bool sneaking;
+    public bool runningSlide;
+    public bool disableControl;
 
 
     private float _horizontal;
@@ -99,13 +101,13 @@ public class StateBehaviour : MonoBehaviour
             }
 
             // Change player's Capsule collider size 
-            _cCollider.height = Mathf.Lerp(_cCollider.height, 1.79f, Time.deltaTime * 6f);
+            //_cCollider.height = Mathf.Lerp(_cCollider.height, 1.79f, Time.deltaTime * 6f);
         }
         else
         {
             onGround = false;
             // shrink player's Capsule collider size 
-            _cCollider.height = Mathf.Lerp(_cCollider.height, 1.3f, Time.deltaTime * 6f);
+            //_cCollider.height = Mathf.Lerp(_cCollider.height, 1.3f, Time.deltaTime * 6f);
         }
     }
 
@@ -136,6 +138,11 @@ public class StateBehaviour : MonoBehaviour
             jumping = true;
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftShift) && onGround && Mathf.Abs(_horizontal) > 0.4f)
+        {
+            runningSlide = true;
+        }
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             sneaking = !sneaking;
@@ -148,20 +155,34 @@ public class StateBehaviour : MonoBehaviour
 
     private void HandleMovement()
     {
-        if (_horizontal != 0 && !jumping)
+        if (_horizontal != 0 && !disableControl)
         {
             transform.rotation = Quaternion.LookRotation(_movVector);
-            _myAnimator.SetFloat("InputX", Mathf.Abs(_horizontal));
             currentSpeed =  ledgeWalking? ledgeWalkingSpeed: sneaking? sneakingSpeed : walkSpeed;
             transform.Translate(transform.InverseTransformDirection(transform.forward) * currentSpeed * Time.deltaTime);
         }
 
         // jump key pressed and player is onGround
-        if (jumping)
+        if (jumping && !ledgeWalking)
         {
             StartCoroutine(JumpLogic());
             jumping = false;
         }
+
+        // Left Shift key pressed and player is onGround
+        if (runningSlide && !ledgeWalking)
+        {
+            _horizontal = 0f; // Reset Input
+            StartCoroutine(RunningSlide());
+            runningSlide = false;
+        }
+    }
+
+    IEnumerator RunningSlide()
+    {
+        yield return null;
+        _myAnimator.Play("Running Slide");
+        _myRigidbody.AddForce(transform.forward * jumpFrwdDist * 2.5f, ForceMode.Acceleration);
     }
 
     IEnumerator JumpLogic()
@@ -187,6 +208,8 @@ public class StateBehaviour : MonoBehaviour
     
     private void ManageStates()
     {
+        disableControl = _myAnimator.GetBool("Disable Controls");
+        _myAnimator.SetFloat("InputX", Mathf.Abs(_horizontal));
         _myAnimator.SetBool("Crouching", sneaking);
         _myAnimator.SetBool("Grounded", onGround);
         _myAnimator.SetBool("On Ledge", ledgeWalking);

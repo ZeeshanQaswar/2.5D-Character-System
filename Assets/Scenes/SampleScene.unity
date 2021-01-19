@@ -266,7 +266,7 @@ MonoBehaviour:
   ignoreLayers:
     serializedVersion: 2
     m_Bits: 4
-  jumpVerticalDist: 200
+  jumpVerticalDist: 250
   jumpFrwdDist: 150
   gCheckPoint: {fileID: 116683010}
   grndCheckDistance: 0.38
@@ -280,6 +280,8 @@ MonoBehaviour:
   surfaceCheck: 0
   jumping: 0
   sneaking: 0
+  runningSlide: 0
+  disableControl: 0
   groundDistance: 0
 --- !u!54 &76950228
 Rigidbody:
@@ -517,8 +519,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 469881056}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.33, z: 13.75}
-  m_LocalScale: {x: 1, y: 0.18993986, z: 1.6643537}
+  m_LocalPosition: {x: 0, y: 0.08, z: 13.75}
+  m_LocalScale: {x: 1, y: 0.0833798, z: 1.0641379}
   m_Children: []
   m_Father: {fileID: 393418207}
   m_RootOrder: 10
