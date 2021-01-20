@@ -28,13 +28,9 @@ public class StateBehaviour : MonoBehaviour
     [Header("== FRONT CHECK ==")]
     public Transform fCheckPoint;
     public float frontCheckDistance;
-    
-    //[Header("== FRONT CHECK ==")]
-    //public Transform distCheckPoint;
-    //public float distCheckDistance;
 
 
-    [Header("== STATES ==")]
+    [Header("== PLAYER STATES ==")]
     public CurrentState pCurrentState;
     public bool runState;
     public bool onGround;
@@ -53,6 +49,7 @@ public class StateBehaviour : MonoBehaviour
     private CapsuleCollider _cCollider;
     private Transform _playerModel;
     public float groundDistance;
+    private float _pPlayrDir;
 
     private Vector3 _movVector;
 
@@ -93,6 +90,7 @@ public class StateBehaviour : MonoBehaviour
                 {
                     ledgeWalking = true;
                     runningSlide = false;
+                    jumping = false;
                     sneaking = false;
                 }
 
@@ -155,7 +153,21 @@ public class StateBehaviour : MonoBehaviour
     {
         if (_horizontal != 0 && !disableControl)
         {
-            transform.rotation = Quaternion.LookRotation(_movVector);
+            Quaternion rotateTowards = Quaternion.LookRotation(_movVector);
+
+            #region LOGIC TO DETECT DIRECTION CHANGE IN PLAYER
+
+            if (_pPlayrDir != rotateTowards.eulerAngles.y)
+            {
+                _pPlayrDir = rotateTowards.eulerAngles.y;
+                _myAnimator.Play("Running Turn 180"); 
+                _myRigidbody.AddForce(transform.forward * 20f, ForceMode.Acceleration);
+                return;
+            }
+
+            #endregion
+
+            transform.rotation = rotateTowards;
             currentSpeed =  ledgeWalking? ledgeWalkingSpeed: sneaking? sneakingSpeed : walkSpeed;
             transform.Translate(transform.InverseTransformDirection(transform.forward) * currentSpeed * Time.deltaTime);
         }
